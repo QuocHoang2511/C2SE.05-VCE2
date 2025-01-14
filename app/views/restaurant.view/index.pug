@@ -1,0 +1,56 @@
+extends ../layout
+
+block content
+  header.masthead(style="height: 400px; object-fit: cover; center/cover no-repeat;")
+    .container.h-100.d-flex.align-items-center.justify-content-center
+      span.text-white.px-3.py-2.fs-1.fw-bold.shadow.bg-dark.bg-opacity-50.rounded Nhà Hàng
+    script(type="text/javascript" src="/javascripts/navBar.js")
+
+  // Danh sách nhà hàng
+  section#services.page-section
+    .container
+      - if (!restaurant || restaurant.length === 0)
+        .text-center.mt-5
+          img(src="/images/no_data.png" alt="No Data" style="max-width: 200px;")
+          p.mt-3.text-muted No restaurants found. Check back later!
+      - else
+        .row.justify-content-center
+          each restaurants in restaurant
+            - if (restaurants.restaurant_name && restaurants.address && restaurants.phone_number)
+              .col-md-4.col-lg-3.mb-4
+                .card.shadow-sm.border-0(style="transition: transform 0.3s ease, box-shadow 0.3s ease;")
+                  img.card-img-top(
+                    src=restaurants.img_restaurant ? `data:image/jpeg;base64,${restaurants.img_restaurant.toString('base64')}` : "/images/img/about/3.jpg"
+                    alt=restaurants.restaurant_name
+                  )
+                  .card-body.text-center
+                    h5.card-title.text-truncate(style="font-size: 1.25rem; font-weight: bold;")= restaurants.restaurant_name
+                    p.card-text.text-muted.small.mb-2
+                      | #{restaurants.description.length > 70 ? restaurants.description.substring(0, 70) + '...' : restaurants.description}
+                    p.card-text.mb-2
+                      strong Address:
+                      | #{restaurants.address}
+                    p.card-text.mb-3
+                      strong Phone:
+                      | #{restaurants.phone_number}
+                    p.card-text.mb-2
+                      strong đánh giá:
+                        each i in [1, 2, 3, 4, 5]
+                          - if (restaurants.averageRating && i <= Math.floor(restaurants.averageRating))
+                            i.fa.fa-star.text-warning
+                          - else if (restaurants.averageRating && i === Math.ceil(restaurants.averageRating) && restaurants.averageRating % 1 !== 0)
+                            i.fa.fa-star-half-o.text-warning
+                          - else
+                            i.fa.fa-star-o.text-muted
+
+                    p.card-text.mb-3
+                      strong Đánh giá tốt:
+                      | #{restaurants.percent_pos.toFixed(2)}%
+                    a.btn.btn-outline-primary.btn-sm.text-uppercase.mt-2(href=`/api/v1/feedback/${restaurants.id}` style="color: #007bff; transition: background-color 0.3s, color 0.3s;") View Restaurant
+
+  // Hiệu ứng hover thẻ card
+  style.
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }

@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+
+  html
+    head
+      link(rel="stylesheet" href="/css/bootstrap.min.css")
+      link(rel="stylesheet" href="/css/font-awesome/css/font-awesome.min.css")
+      link(rel="stylesheet" href="/stylesheets/profile/editprofile.css")
+
+    section(style="padding-top: 117px;")
+      // Header
+      header.header(style="margin-top: 31px;")
+        h1.text-white.px-3.py-2.fw-bold.shadow.rounded Hồ Sơ
+
+
+      .container
+        // Sidebar
+        aside.sidebar
+          .profile-info
+            img.profile-pic(
+              src=User.avatar ? `data:image/jpeg;base64,${User.avatar.toString('base64')}` : "/images/img/about/3.jpg"
+              alt=User.name
+            )
+            p.name #{User.username}
+            p.email #{User.email}
+          nav.menu
+            h3 Account
+            ul
+              li
+                a(href="/api/v1/user/editprofile") Personal Profile
+              li
+                a(href="/api/v1/user/changepassword") Change Password
+              li
+                a(href="/api/v1/user/favorite") Favorites
+              li
+                a(href="/api/v1/user/registering") Restaurant Recommendation
+
+        // Main Content
+        section.main-content
+          block main-content 

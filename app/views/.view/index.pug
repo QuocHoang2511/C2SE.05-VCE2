@@ -1,0 +1,99 @@
+extends ../layout
+
+block content
+  header.masthead
+    .container
+      .masthead-subheading Welcome to the Restaurant
+    script(type="text/javascript" src="/javascripts/navBar.js")  
+  // Danh sách nhà hàng
+  section#services.page-section
+    .container
+      - if (!restaurant || restaurant.length === 0)
+        .text-center.mt-5
+          img(src="/images/no_data.png" alt="No Data" style="max-width: 200px;")
+          p.mt-3.text-muted No restaurants found. Check back later!
+      - else
+        .row.justify-content-center
+          each restaurants in restaurant
+            - if (restaurants.restaurant_name && restaurants.address && restaurants.phone_number)
+              .col-md-4.col-lg-3.mb-4
+                .card.shadow-sm.border-0(style="transition: transform 0.3s ease, box-shadow 0.3s ease;")
+                  img.card-img-top(
+                    src=restaurants.img_restaurant ? `data:image/jpeg;base64,${restaurants.img_restaurant.toString('base64')}` : "/images/img/about/3.jpg"
+                    alt=restaurants.restaurant_name
+                  )
+
+                  .card-body.text-center
+                    h5.card-title.text-truncate(style="font-size: 1.25rem; font-weight: bold;")= restaurants.restaurant_name
+                    p.card-text.text-muted.small.mb-2
+                      | #{restaurants.description.length > 70 ? restaurants.description.substring(0, 70) + '...' : restaurants.description}
+                    p.card-text.mb-2
+                      strong Address:
+                      | #{restaurants.address}
+                    p.card-text.mb-3
+                      strong Phone:
+                      | #{restaurants.phone_number}
+                    a.btn.btn-outline-primary.btn-sm.text-uppercase.mt-2(href=`/restaurant/${restaurants.id}` style="color: #007bff; transition: background-color 0.3s, color 0.3s;") View Restaurant
+
+  // Hiệu ứng hover thẻ card
+  style.
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+  // Pagination
+  nav.pagination-nav
+    ul.pagination.justify-content-center
+      - const visiblePages = 5; // Số trang tối đa hiển thị xung quanh trang hiện tại
+      - const startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+      - const endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+      // Previous button
+      - if (currentPage > 1)
+        li.page-item
+          a.page-link(href=`?page=${currentPage - 1}` style="color: #007bff;") Previous
+
+      // Page numbers
+      - for (let i = startPage; i <= endPage; i++)
+        li.page-item(class=(i === currentPage ? 'active' : ''))
+          a.page-link(href=`?page=${i}` style=(i === currentPage ? "background-color: #007bff; border-color: #007bff; color: #fff;" : "color: #007bff;")) #{i}
+
+      // "..." indicator if needed
+      - if (endPage < totalPages)
+        li.page-item.disabled
+          span.page-link ... 
+        li.page-item
+          a.page-link(href=`?page=${totalPages}` style="color: #007bff;") #{totalPages}
+
+      // Next button
+      - if (currentPage < totalPages)
+        li.page-item
+          a.page-link(href=`?page=${currentPage + 1}` style="color: #007bff;") Next
+
+
+  style.
+
+    .pagination a {
+      padding: 8px 12px;
+      margin: 0 2px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .pagination a:hover {
+      background-color: #e0e0e0;
+    }
+
+    .pagination .active .page-link {
+      background-color: #ff6600;
+      border-color: #ff6600;
+      color: white;
+    }
+
+    .pagination .page-item.disabled .page-link {
+      color: #ccc;
+      cursor: not-allowed;
+    }
